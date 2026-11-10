@@ -9,25 +9,19 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
 
-.titulo-principal {
-    font-family: 'Bungee', sans-serif;
-    font-weight: normal;
-    letter-spacing: 2px;
-}
         * {
             box-sizing: border-box;
         }
 
         body {
-    margin: 0;
-    font-family: 'Bungee', sans-serif;
-    background: #071a26;
-    color: white;
-    overflow-x: hidden;
-    min-height: 100vh;
-}
+            margin: 0;
+            font-family: 'Bungee', sans-serif;
+            background: #071a26;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
 
-        /* Fundo de partículas */
         #particulas {
             position: fixed;
             inset: 0;
@@ -132,6 +126,60 @@
             padding: 20px;
             color: #c4d6dc;
         }
+
+        /* PERSONAGEM DE COMEMORAÇÃO */
+
+        .personagem-comemoracao {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 170px;
+            max-width: 35vw;
+            height: auto;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateX(35px) scale(0.85);
+            filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
+        }
+
+        .personagem-comemoracao.aparecer {
+            animation: comemoracao 2s ease-in-out forwards;
+        }
+
+        @keyframes comemoracao {
+            0% {
+                opacity: 0;
+                transform: translateX(35px) scale(0.75);
+            }
+
+            15% {
+                opacity: 1;
+                transform: translateX(0) scale(1.05);
+            }
+
+            30%, 75% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(25px) scale(0.85);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .personagem-comemoracao {
+                right: 10px;
+                bottom: 10px;
+                width: 125px;
+            }
+
+            .card {
+                width: min(100%, 320px);
+            }
+        }
     </style>
 </head>
 
@@ -140,11 +188,12 @@
     <canvas id="particulas"></canvas>
 
     <header>
-        <h1 class="titulo-principal">Monitoramento</h1>
+        <h1>Monitoramento</h1>
         <p>Painel de acompanhamento da aplicação</p>
     </header>
 
     <main>
+
         <div class="titulo">
             <h2>Painel de Monitoramento</h2>
             <p>Acompanhe as informações da aplicação.</p>
@@ -173,14 +222,25 @@
             <a href="/acessos" class="botao">Ver Acessos</a>
             <a href="/monitoramento" class="botao">Dados Técnicos</a>
         </div>
+
     </main>
 
     <footer>
         Projeto acadêmico — Sistema de Monitoramento
     </footer>
 
+    <!-- PERSONAGEM UNIC -->
+    <img
+        id="personagemComemoracao"
+        class="personagem-comemoracao"
+        src="/personagem-unic.png"
+        alt="Personagem UNIC comemorando"
+    >
+
     <script>
+
         // ANIMAÇÃO DAS PARTÍCULAS
+
         const canvas = document.getElementById('particulas');
         const ctx = canvas.getContext('2d');
 
@@ -189,7 +249,11 @@
         let pontos = [];
 
         function ajustarTela() {
-            const escala = Math.min(window.devicePixelRatio || 1, 2);
+
+            const escala = Math.min(
+                window.devicePixelRatio || 1,
+                2
+            );
 
             largura = window.innerWidth;
             altura = window.innerHeight;
@@ -206,6 +270,7 @@
         }
 
         function criarPontos() {
+
             const quantidade = Math.min(
                 150,
                 Math.floor((largura * altura) / 7500)
@@ -214,6 +279,7 @@
             pontos = [];
 
             for (let i = 0; i < quantidade; i++) {
+
                 pontos.push({
                     x: Math.random() * largura,
                     y: Math.random() * altura,
@@ -223,23 +289,24 @@
                     brilho: Math.random(),
                     variacao: Math.random() * 0.02 + 0.005
                 });
+
             }
         }
 
         function animar() {
+
             ctx.clearRect(0, 0, largura, altura);
 
             pontos.forEach((ponto) => {
+
                 ponto.x += ponto.velocidadeX;
                 ponto.y += ponto.velocidadeY;
 
-                // Reposiciona partículas que saem da tela
                 if (ponto.x < -10) ponto.x = largura + 10;
                 if (ponto.x > largura + 10) ponto.x = -10;
                 if (ponto.y < -10) ponto.y = altura + 10;
                 if (ponto.y > altura + 10) ponto.y = -10;
 
-                // Variação natural do brilho
                 ponto.brilho += ponto.variacao;
 
                 if (ponto.brilho > 1 || ponto.brilho < 0) {
@@ -248,8 +315,8 @@
 
                 const opacidade = 0.3 + ponto.brilho * 0.7;
 
-                // Desenha o brilho ao redor do ponto
                 ctx.beginPath();
+
                 ctx.arc(
                     ponto.x,
                     ponto.y,
@@ -258,11 +325,13 @@
                     Math.PI * 2
                 );
 
-                ctx.fillStyle = `rgba(120, 185, 154, ${opacidade * 0.15})`;
+                ctx.fillStyle =
+                    `rgba(120, 185, 154, ${opacidade * 0.15})`;
+
                 ctx.fill();
 
-                // Desenha o ponto luminoso
                 ctx.beginPath();
+
                 ctx.arc(
                     ponto.x,
                     ponto.y,
@@ -271,29 +340,47 @@
                     Math.PI * 2
                 );
 
-                ctx.fillStyle = `rgba(213, 235, 168, ${opacidade})`;
+                ctx.fillStyle =
+                    `rgba(213, 235, 168, ${opacidade})`;
+
                 ctx.fill();
+
             });
 
-            // Liga pontos próximos com linhas discretas
             for (let i = 0; i < pontos.length; i++) {
+
                 for (let j = i + 1; j < pontos.length; j++) {
+
                     const dx = pontos[i].x - pontos[j].x;
                     const dy = pontos[i].y - pontos[j].y;
-                    const distancia = Math.sqrt(dx * dx + dy * dy);
+
+                    const distancia = Math.sqrt(
+                        dx * dx + dy * dy
+                    );
 
                     if (distancia < 120) {
-                        const opacidade = (1 - distancia / 120) * 0.2;
+
+                        const opacidade =
+                            (1 - distancia / 120) * 0.2;
 
                         ctx.beginPath();
-                        ctx.moveTo(pontos[i].x, pontos[i].y);
-                        ctx.lineTo(pontos[j].x, pontos[j].y);
+
+                        ctx.moveTo(
+                            pontos[i].x,
+                            pontos[i].y
+                        );
+
+                        ctx.lineTo(
+                            pontos[j].x,
+                            pontos[j].y
+                        );
 
                         ctx.strokeStyle =
                             `rgba(120, 185, 154, ${opacidade})`;
 
                         ctx.lineWidth = 0.7;
                         ctx.stroke();
+
                     }
                 }
             }
@@ -307,19 +394,78 @@
         animar();
 
 
+        // SISTEMA DE COMEMORAÇÃO A CADA 10 ACESSOS
+
+        const personagem = document.getElementById(
+            'personagemComemoracao'
+        );
+
+        let totalAnterior = null;
+        let ultimoMarcoExibido = 0;
+        let temporizadorPersonagem = null;
+
+        function mostrarComemoracao(marco) {
+
+            if (marco <= ultimoMarcoExibido) {
+                return;
+            }
+
+            ultimoMarcoExibido = marco;
+
+            personagem.classList.remove('aparecer');
+
+            // Reinicia a animação
+            void personagem.offsetWidth;
+
+            personagem.classList.add('aparecer');
+
+            clearTimeout(temporizadorPersonagem);
+
+            temporizadorPersonagem = setTimeout(() => {
+
+                personagem.classList.remove('aparecer');
+
+            }, 2000);
+
+            console.log(
+                `Comemoração: ${marco} acessos!`
+            );
+        }
+
+
         // REGISTRO AUTOMÁTICO DE ACESSO
+
         async function registrarAcesso() {
+
             try {
-                await fetch('/registrar-acesso');
-                atualizarMonitoramento();
+
+                await atualizarMonitoramento();
+
+                const resposta = await fetch('/registrar-acesso');
+
+                if (!resposta.ok) {
+                    throw new Error('Falha ao registrar acesso');
+                }
+
+                await atualizarMonitoramento();
+
             } catch (erro) {
-                console.log('Erro ao registrar acesso:', erro);
+
+                console.log(
+                    'Erro ao registrar acesso:',
+                    erro
+                );
+
             }
         }
 
+
         // ATUALIZA OS DADOS DO MONITORAMENTO
+
         async function atualizarMonitoramento() {
+
             try {
+
                 const resposta = await fetch('/monitoramento');
 
                 if (!resposta.ok) {
@@ -328,8 +474,12 @@
 
                 const dados = await resposta.json();
 
+                const totalAtual = Number(
+                    dados.totalDeAcessos
+                );
+
                 document.getElementById('acessos').textContent =
-                    dados.totalDeAcessos;
+                    totalAtual;
 
                 document.getElementById('tempo').textContent =
                     dados.tempoDeAtividade + ' s';
@@ -337,14 +487,47 @@
                 document.getElementById('memoria').textContent =
                     dados.memoriaUsadaMB + ' MB';
 
+
+                // Verifica se atingiu um novo marco de 10 acessos
+
+                if (totalAnterior !== null) {
+
+                    const marcoAnterior =
+                        Math.floor(totalAnterior / 10) * 10;
+
+                    const marcoAtual =
+                        Math.floor(totalAtual / 10) * 10;
+
+                    if (
+                        marcoAtual > marcoAnterior &&
+                        marcoAtual > 0
+                    ) {
+
+                        mostrarComemoracao(marcoAtual);
+
+                    }
+                }
+
+                totalAnterior = totalAtual;
+
             } catch (erro) {
-                console.log('Erro ao buscar dados:', erro);
+
+                console.log(
+                    'Erro ao buscar dados:',
+                    erro
+                );
+
             }
         }
 
+
+        // INICIA O SISTEMA
+
         registrarAcesso();
 
+        // Verifica novos acessos a cada 5 segundos
         setInterval(atualizarMonitoramento, 5000);
+
     </script>
 
 </body>
