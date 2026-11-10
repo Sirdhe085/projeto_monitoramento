@@ -1,0 +1,17 @@
+{
+  "name": "projeto-monitoramento",
+  "version": "1.0.0",
+  "description": "Sistema academico de monitoramento",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.3.0",
+    "sqlite3": "^6.0.1"
+  }
+}

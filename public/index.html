@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Monitoramento</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+
+.titulo-principal {
+    font-family: 'Bungee', sans-serif;
+    font-weight: normal;
+    letter-spacing: 2px;
+}
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+    margin: 0;
+    font-family: 'Bungee', sans-serif;
+    background: #071a26;
+    color: white;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+        /* Fundo de partículas */
+        #particulas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 20% 20%, #123d50 0%, transparent 45%),
+                radial-gradient(ellipse at 80% 80%, #153b38 0%, transparent 45%),
+                #071a26;
+        }
+
+        header {
+            background: rgba(31, 82, 107, 0.65);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(168, 214, 141, 0.3);
+        }
+
+        header p {
+            color: #D5EBA8;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .titulo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .titulo h2 {
+            color: #D5EBA8;
+        }
+
+        .titulo p {
+            color: #c4d6dc;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.94);
+            color: #1F526B;
+            width: 250px;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 6px solid #78B99A;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 30px rgba(120, 185, 154, 0.25);
+        }
+
+        .card h3 {
+            color: #438F8B;
+        }
+
+        .valor {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .botoes {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .botao {
+            display: inline-block;
+            background: #438F8B;
+            color: white;
+            padding: 12px 20px;
+            margin: 5px;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .botao:hover {
+            background: #78B99A;
+            color: #071a26;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #c4d6dc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="particulas"></canvas>
+
+    <header>
+        <h1 class="titulo-principal">Monitoramento</h1>
+        <p>Painel de acompanhamento da aplicação</p>
+    </header>
+
+    <main>
+        <div class="titulo">
+            <h2>Painel de Monitoramento</h2>
+            <p>Acompanhe as informações da aplicação.</p>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Total de Acessos</h3>
+                <div class="valor" id="acessos">Carregando...</div>
+            </div>
+
+            <div class="card">
+                <h3>Tempo de Atividade</h3>
+                <div class="valor" id="tempo">Carregando...</div>
+            </div>
+
+            <div class="card">
+                <h3>Memória Utilizada</h3>
+                <div class="valor" id="memoria">Carregando...</div>
+            </div>
+
+        </div>
+
+        <div class="botoes">
+            <a href="/acessos" class="botao">Ver Acessos</a>
+            <a href="/monitoramento" class="botao">Dados Técnicos</a>
+        </div>
+    </main>
+
+    <footer>
+        Projeto acadêmico — Sistema de Monitoramento
+    </footer>
+
+    <script>
+        // ANIMAÇÃO DAS PARTÍCULAS
+        const canvas = document.getElementById('particulas');
+        const ctx = canvas.getContext('2d');
+
+        let largura;
+        let altura;
+        let pontos = [];
+
+        function ajustarTela() {
+            const escala = Math.min(window.devicePixelRatio || 1, 2);
+
+            largura = window.innerWidth;
+            altura = window.innerHeight;
+
+            canvas.width = largura * escala;
+            canvas.height = altura * escala;
+
+            canvas.style.width = largura + 'px';
+            canvas.style.height = altura + 'px';
+
+            ctx.setTransform(escala, 0, 0, escala, 0, 0);
+
+            criarPontos();
+        }
+
+        function criarPontos() {
+            const quantidade = Math.min(
+                150,
+                Math.floor((largura * altura) / 7500)
+            );
+
+            pontos = [];
+
+            for (let i = 0; i < quantidade; i++) {
+                pontos.push({
+                    x: Math.random() * largura,
+                    y: Math.random() * altura,
+                    tamanho: Math.random() * 2 + 0.5,
+                    velocidadeX: (Math.random() - 0.5) * 0.5,
+                    velocidadeY: (Math.random() - 0.5) * 0.5,
+                    brilho: Math.random(),
+                    variacao: Math.random() * 0.02 + 0.005
+                });
+            }
+        }
+
+        function animar() {
+            ctx.clearRect(0, 0, largura, altura);
+
+            pontos.forEach((ponto) => {
+                ponto.x += ponto.velocidadeX;
+                ponto.y += ponto.velocidadeY;
+
+                // Reposiciona partículas que saem da tela
+                if (ponto.x < -10) ponto.x = largura + 10;
+                if (ponto.x > largura + 10) ponto.x = -10;
+                if (ponto.y < -10) ponto.y = altura + 10;
+                if (ponto.y > altura + 10) ponto.y = -10;
+
+                // Variação natural do brilho
+                ponto.brilho += ponto.variacao;
+
+                if (ponto.brilho > 1 || ponto.brilho < 0) {
+                    ponto.variacao *= -1;
+                }
+
+                const opacidade = 0.3 + ponto.brilho * 0.7;
+
+                // Desenha o brilho ao redor do ponto
+                ctx.beginPath();
+                ctx.arc(
+                    ponto.x,
+                    ponto.y,
+                    ponto.tamanho * 4,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fillStyle = `rgba(120, 185, 154, ${opacidade * 0.15})`;
+                ctx.fill();
+
+                // Desenha o ponto luminoso
+                ctx.beginPath();
+                ctx.arc(
+                    ponto.x,
+                    ponto.y,
+                    ponto.tamanho,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fillStyle = `rgba(213, 235, 168, ${opacidade})`;
+                ctx.fill();
+            });
+
+            // Liga pontos próximos com linhas discretas
+            for (let i = 0; i < pontos.length; i++) {
+                for (let j = i + 1; j < pontos.length; j++) {
+                    const dx = pontos[i].x - pontos[j].x;
+                    const dy = pontos[i].y - pontos[j].y;
+                    const distancia = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distancia < 120) {
+                        const opacidade = (1 - distancia / 120) * 0.2;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pontos[i].x, pontos[i].y);
+                        ctx.lineTo(pontos[j].x, pontos[j].y);
+
+                        ctx.strokeStyle =
+                            `rgba(120, 185, 154, ${opacidade})`;
+
+                        ctx.lineWidth = 0.7;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animar);
+        }
+
+        window.addEventListener('resize', ajustarTela);
+
+        ajustarTela();
+        animar();
+
+
+        // REGISTRO AUTOMÁTICO DE ACESSO
+        async function registrarAcesso() {
+            try {
+                await fetch('/registrar-acesso');
+                atualizarMonitoramento();
+            } catch (erro) {
+                console.log('Erro ao registrar acesso:', erro);
+            }
+        }
+
+        // ATUALIZA OS DADOS DO MONITORAMENTO
+        async function atualizarMonitoramento() {
+            try {
+                const resposta = await fetch('/monitoramento');
+
+                if (!resposta.ok) {
+                    throw new Error('Falha ao buscar métricas');
+                }
+
+                const dados = await resposta.json();
+
+                document.getElementById('acessos').textContent =
+                    dados.totalDeAcessos;
+
+                document.getElementById('tempo').textContent =
+                    dados.tempoDeAtividade + ' s';
+
+                document.getElementById('memoria').textContent =
+                    dados.memoriaUsadaMB + ' MB';
+
+            } catch (erro) {
+                console.log('Erro ao buscar dados:', erro);
+            }
+        }
+
+        registrarAcesso();
+
+        setInterval(atualizarMonitoramento, 5000);
+    </script>
+
+</body>
+</html>
